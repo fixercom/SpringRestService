@@ -11,6 +11,10 @@ public class PublishingHouse {
     public PublishingHouse() {
     }
 
+    public PublishingHouse(String name) {
+        this.name = name;
+    }
+
     public PublishingHouse(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -39,4 +43,5 @@ public class PublishingHouse {
     public void setBooks(List<Book> books) {
         this.books = books;
     }
+
 }

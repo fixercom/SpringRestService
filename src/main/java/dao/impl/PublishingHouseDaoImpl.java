@@ -20,7 +20,7 @@ public class PublishingHouseDaoImpl implements PublishingHouseDao {
     private PublishingHouseDaoImpl() {
     }
 
-    public PublishingHouseDaoImpl getInstance() {
+    public static PublishingHouseDaoImpl getInstance() {
         return INSTANCE;
     }
 

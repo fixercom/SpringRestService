@@ -4,6 +4,7 @@ import config.DataSource;
 import dao.AuthorDao;
 import dao.impl.AuthorDaoImpl;
 import entity.Author;
+import exception.DaoException;
 import service.AuthorService;
 
 import java.sql.Connection;
@@ -27,7 +28,7 @@ public class AuthorServiceImpl implements AuthorService {
         try (Connection connection = DataSource.getConnection()) {
             return authorDao.save(author, connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -36,7 +37,7 @@ public class AuthorServiceImpl implements AuthorService {
         try (Connection connection = DataSource.getConnection()) {
             return authorDao.findById(id, connection).orElseThrow();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -45,7 +46,7 @@ public class AuthorServiceImpl implements AuthorService {
         try (Connection connection = DataSource.getConnection()) {
             return authorDao.findAll(connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -54,7 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
         try (Connection connection = DataSource.getConnection()) {
             return authorDao.update(id, author, connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 
@@ -63,7 +64,7 @@ public class AuthorServiceImpl implements AuthorService {
         try (Connection connection = DataSource.getConnection()) {
             authorDao.delete(id, connection);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DaoException(e);
         }
     }
 

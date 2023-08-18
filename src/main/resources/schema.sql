@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS books
 
     CONSTRAINT pk_books PRIMARY KEY (id),
     CONSTRAINT uc_books_name UNIQUE (name),
-    constraint books_publish_houses_id_fk foreign key (publish_house_id) references publish_houses(id)
+    constraint books_publish_houses_id_fk foreign key (publish_house_id) references publish_houses (id)
 );
 
 CREATE TABLE IF NOT EXISTS author_books
@@ -33,6 +33,6 @@ CREATE TABLE IF NOT EXISTS author_books
     book_id   BIGINT NOT NULL,
 
     CONSTRAINT pk_author_books PRIMARY KEY (author_id, book_id),
-    constraint author_books_authors_id_fk foreign key (author_id) references authors (id),
-    constraint author_books_books_id_fk foreign key (book_id) references books (id)
+    constraint author_books_authors_id_fk foreign key (author_id) references authors (id) ON DELETE CASCADE,
+    constraint author_books_books_id_fk foreign key (book_id) references books (id) ON DELETE CASCADE
 );
