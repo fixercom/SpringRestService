@@ -1,28 +1,36 @@
+import config.DataSource;
+import dao.BookDao;
+import dao.impl.BookDaoImpl;
 import entity.Author;
-import service.AuthorService;
-import service.impl.AuthorServiceImpl;
+import entity.Book;
+import entity.PublishingHouse;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 public class Temp {
-    public static void main(String[] args) {
-        AuthorService authorService = AuthorServiceImpl.getInstance();
+    public static void main(String[] args) throws SQLException {
+        BookDao bookDao = BookDaoImpl.getInstance();
 
-        Author author1 = new Author("Alex Mil");
-        Author author2 = new Author("Jen Pol");
-        Author author3 = new Author("Robert Martin");
-        Author author4 = new Author("Updated");
-        authorService.addAuthor(author1);
-        authorService.addAuthor(author2);
-        authorService.addAuthor(author3);
-        System.out.println(authorService.getAllAuthors());
-        authorService.updateAuthor(author2.getId(),author4);
-        System.out.println(authorService.getAllAuthors());
+        PublishingHouse publishingHouse = new PublishingHouse();
+        publishingHouse.setId(2L);
 
-        System.out.println(author1.getId());
-        authorService.deleteAuthor(author1.getId());
-        System.out.println(authorService.getAllAuthors());
+        Author author1 = new Author();
+        author1.setId(1L);
+        Author author2 = new Author();
+        author2.setId(3L);
 
-        System.out.println(authorService.getAuthorById(author2.getId()));
+        Book book = new Book();
+        book.setName("Super book");
+        book.setPublishingHouse(publishingHouse);
+        book.setAuthors(List.of(author1, author2));
 
+        try (Connection connection = DataSource.getConnection()) {
+            bookDao.save(book, connection);
+            System.out.println(book);
 
+            System.out.println(bookDao.findById(book.getId(), connection).orElse(null));
+        }
     }
 }

@@ -12,16 +12,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AuthorServiceImpl implements AuthorService {
-    private static final AuthorServiceImpl INSTANCE = new AuthorServiceImpl();
+    private static AuthorServiceImpl INSTANCE = new AuthorServiceImpl();
 
-    private AuthorServiceImpl() {
+    private AuthorDao authorDao = AuthorDaoImpl.getInstance();
+
+    public AuthorServiceImpl() {
     }
 
     public static AuthorServiceImpl getInstance() {
         return INSTANCE;
     }
-
-    private final AuthorDao authorDao = AuthorDaoImpl.getInstance();
 
     @Override
     public Author addAuthor(Author author) {

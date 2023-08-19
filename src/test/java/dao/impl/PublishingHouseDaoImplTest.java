@@ -8,6 +8,7 @@ import entity.PublishingHouse;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testFindAll() throws SQLException{
+    void testFindAll() throws SQLException {
         try (Connection connection = TestDataSource.getConnection()) {
             PublishingHouse publishingHouse = new PublishingHouse("name");
             PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse, connection);
@@ -69,7 +70,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testUpdate() throws SQLException{
+    void testUpdate() throws SQLException {
         try (Connection connection = TestDataSource.getConnection()) {
             PublishingHouse publishingHouse = new PublishingHouse("name");
             PublishingHouse publishingHouseForUpdate = new PublishingHouse("new");
@@ -89,6 +90,18 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void delete() {
+    void testDelete() throws SQLException {
+        try (Connection connection = TestDataSource.getConnection()) {
+            PublishingHouse publishingHouse = new PublishingHouse("name");
+            PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse, connection);
+
+            assertEquals(1, publishingHouseDao.findAll(connection).size(),
+                    "The findAll method must return a list with size = 1");
+
+            publishingHouseDao.delete(savedPublishingHouse.getId(), connection);
+
+            assertEquals(0, publishingHouseDao.findAll(connection).size(),
+                    "The findAll method must return a list with size = 0");
+        }
     }
 }

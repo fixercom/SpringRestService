@@ -1,13 +1,28 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Book {
 
     Long id;
     String name;
-    List<Author> authors;
     PublishingHouse publishingHouse;
+    List<Author> authors = new ArrayList<>();
+
+    public Book() {
+    }
+
+    public Book(String name, PublishingHouse publishingHouse) {
+        this.name = name;
+        this.publishingHouse = publishingHouse;
+    }
+
+    public Book(String name, PublishingHouse publishingHouse, List<Author> authors) {
+        this.name = name;
+        this.publishingHouse = publishingHouse;
+        this.authors = authors;
+    }
 
     public Long getId() {
         return id;
@@ -41,13 +56,5 @@ public class Book {
         this.publishingHouse = publishingHouse;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", authors=" + authors +
-                ", publishingHouse=" + publishingHouse +
-                '}';
-    }
+
 }

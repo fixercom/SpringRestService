@@ -11,11 +11,11 @@ import java.util.Optional;
 public class PublishingHouseDaoImpl implements PublishingHouseDao {
 
     private static final PublishingHouseDaoImpl INSTANCE = new PublishingHouseDaoImpl();
-    private static final String SAVE_SQL = "INSERT INTO publish_houses (name) VALUES ( ? )";
-    private static final String FIND_BY_ID_SQL = "SELECT id, name FROM publish_houses WHERE id = ?";
-    private static final String FIND_ALL_SQL = "SELECT id, name FROM publish_houses";
-    private static final String UPDATE_SQL = "UPDATE publish_houses SET name = ? WHERE id = ?";
-    private static final String DELETE_SQL = "DELETE FROM publish_houses WHERE id = ?";
+    private static final String SAVE_SQL = "INSERT INTO publishing_houses (name) VALUES ( ? )";
+    private static final String FIND_BY_ID_SQL = "SELECT id, name FROM publishing_houses WHERE id = ?";
+    private static final String FIND_ALL_SQL = "SELECT id, name FROM publishing_houses";
+    private static final String UPDATE_SQL = "UPDATE publishing_houses SET name = ? WHERE id = ?";
+    private static final String DELETE_SQL = "DELETE FROM publishing_houses WHERE id = ?";
 
     private PublishingHouseDaoImpl() {
     }

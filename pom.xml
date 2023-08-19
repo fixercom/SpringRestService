@@ -18,6 +18,7 @@
         <postgresql.version>42.6.0</postgresql.version>
         <junit-jupiter-api.version>5.10.0</junit-jupiter-api.version>
         <h2.version>2.2.220</h2.version>
+        <mockito-junit-jupiter.version>5.3.1</mockito-junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -43,13 +44,19 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit-jupiter-api.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
 
