@@ -51,8 +51,6 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book save(Book book, Connection connection) throws SQLException {
-        //connection.setAutoCommit(false);
-
         try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
                 Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, book.getName());
@@ -63,7 +61,6 @@ public class BookDaoImpl implements BookDao {
                 book.setId(generatedKeys.getLong("id"));
             }
         }
-
         try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_AUTHORS_SQL)) {
             List<Long> authorIds = book.getAuthors().stream()
                     .map(Author::getId)
@@ -75,8 +72,6 @@ public class BookDaoImpl implements BookDao {
             }
             preparedStatement.executeBatch();
         }
-
-        //  connection.commit();
         return book;
     }
 

@@ -24,6 +24,12 @@ public class Book {
         this.authors = authors;
     }
 
+    public Book(Long id, String name, PublishingHouse publishingHouse) {
+        this.id = id;
+        this.name = name;
+        this.publishingHouse = publishingHouse;
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,5 +62,13 @@ public class Book {
         this.publishingHouse = publishingHouse;
     }
 
-
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", publishingHouse=" + publishingHouse +
+                ", authors=" + authors +
+                '}';
+    }
 }
