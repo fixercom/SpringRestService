@@ -5,9 +5,8 @@ import java.util.Objects;
 
 public class Author {
 
-    Long id;
-    String name;
-    List<Book> books;
+    private Long id;
+    private String name;
 
     public Author() {
     }

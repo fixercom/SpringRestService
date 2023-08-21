@@ -1,14 +1,11 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class PublishingHouse {
 
     Long id;
     String name;
-    List<Book> books = new ArrayList<>();
 
     public PublishingHouse() {
     }
@@ -38,14 +35,6 @@ public class PublishingHouse {
         this.name = name;
     }
 
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,8 +53,6 @@ public class PublishingHouse {
         return "PublishingHouse{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", books=" + books +
                 '}';
     }
-
 }

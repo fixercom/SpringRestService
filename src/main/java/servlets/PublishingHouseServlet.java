@@ -3,13 +3,13 @@ package servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import config.JacksonObjectMapper;
 import entity.ApiError;
-import entity.Author;
+import entity.PublishingHouse;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.AuthorService;
-import service.impl.AuthorServiceImpl;
+import service.PublishingHouseService;
+import service.impl.PublishingHouseServiceImpl;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,24 +19,24 @@ import java.util.stream.Collectors;
 import static constants.Constant.CONTENT_TYPE_JSON;
 import static constants.Constant.NOT_VALID_REQUEST_URI;
 
-@WebServlet(value = "/authors/*")
-public class AuthorServlet extends HttpServlet {
+@WebServlet(value = "/publishing_houses/*")
+public class PublishingHouseServlet extends HttpServlet {
 
-    private final AuthorService authorService = AuthorServiceImpl.getInstance();
+    private final PublishingHouseService publishingHouseService = PublishingHouseServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
-    private static final String USER_NOT_FOUND_MESSAGE = "User with id=%d does not exist";
+    private static final String PUBLISHING_HOUSE_NOT_FOUND_MESSAGE = "Publishing house with id=%d does not exist";
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String pathInfo = req.getPathInfo();
         String responseJson;
         ApiError error;
         if (pathInfo == null) {
             String body = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            Author author = objectMapper.readValue(body, Author.class);
-            author = authorService.addAuthor(author);
+            PublishingHouse publishingHouse = objectMapper.readValue(body, PublishingHouse.class);
+            publishingHouse = publishingHouseService.addPublishingHouse(publishingHouse);
             resp.setStatus(201);
-            responseJson = objectMapper.writeValueAsString(author);
+            responseJson = objectMapper.writeValueAsString(publishingHouse);
         } else {
             error = new ApiError(400, NOT_VALID_REQUEST_URI);
             responseJson = objectMapper.writeValueAsString(error);
@@ -47,7 +47,7 @@ public class AuthorServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String pathInfo = req.getPathInfo();
         String responseJson;
         ApiError error;
@@ -55,11 +55,11 @@ public class AuthorServlet extends HttpServlet {
             try {
                 Long id = Long.parseLong(pathInfo.split("/")[1]);
                 try {
-                    Author author = authorService.getAuthorById(id);
-                    responseJson = objectMapper.writeValueAsString(author);
+                    PublishingHouse publishingHouse = publishingHouseService.getPublishingHouseById(id);
+                    responseJson = objectMapper.writeValueAsString(publishingHouse);
                     resp.setStatus(200);
                 } catch (NoSuchElementException e) {
-                    error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                    error = new ApiError(409, String.format(PUBLISHING_HOUSE_NOT_FOUND_MESSAGE, id));
                     responseJson = objectMapper.writeValueAsString(error);
                     resp.setStatus(409);
                 }
@@ -69,8 +69,8 @@ public class AuthorServlet extends HttpServlet {
                 resp.setStatus(400);
             }
         } else {
-            List<Author> authors = authorService.getAllAuthors();
-            responseJson = objectMapper.writeValueAsString(authors);
+            List<PublishingHouse> publishingHouses = publishingHouseService.getAllPublishingHouses();
+            responseJson = objectMapper.writeValueAsString(publishingHouses);
             resp.setStatus(200);
         }
         resp.setContentType(CONTENT_TYPE_JSON);
@@ -78,13 +78,13 @@ public class AuthorServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String pathInfo = req.getPathInfo();
         String responseJson;
         ApiError error;
         try {
             Long id = Long.parseLong(pathInfo.split("/")[1]);
-            authorService.deleteAuthor(id);
+            publishingHouseService.deletePublishingHouse(id);
             resp.setStatus(200);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
             error = new ApiError(400, NOT_VALID_REQUEST_URI);
@@ -96,7 +96,7 @@ public class AuthorServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String pathInfo = req.getPathInfo();
         String responseJson;
         ApiError error;
@@ -104,12 +104,12 @@ public class AuthorServlet extends HttpServlet {
             Long id = Long.parseLong(pathInfo.split("/")[1]);
             try {
                 String body = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                Author author = objectMapper.readValue(body, Author.class);
-                author = authorService.updateAuthor(id, author);
-                responseJson = objectMapper.writeValueAsString(author);
+                PublishingHouse publishingHouse = objectMapper.readValue(body, PublishingHouse.class);
+                publishingHouse = publishingHouseService.updatePublishingHouse(id, publishingHouse);
+                responseJson = objectMapper.writeValueAsString(publishingHouse);
                 resp.setStatus(200);
             } catch (NoSuchElementException e) {
-                error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                error = new ApiError(409, String.format(PUBLISHING_HOUSE_NOT_FOUND_MESSAGE, id));
                 responseJson = objectMapper.writeValueAsString(error);
                 resp.setStatus(409);
             }
@@ -121,5 +121,4 @@ public class AuthorServlet extends HttpServlet {
         resp.setContentType(CONTENT_TYPE_JSON);
         resp.getWriter().append(responseJson);
     }
-
 }

@@ -6,6 +6,7 @@ import entity.Author;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public class AuthorDaoImpl implements AuthorDao {
@@ -72,7 +73,11 @@ public class AuthorDaoImpl implements AuthorDao {
         try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, author.getName());
             preparedStatement.setLong(2, id);
-            preparedStatement.executeUpdate();
+            int resultQuery = preparedStatement.executeUpdate();
+            if (resultQuery < 1) {
+                throw new NoSuchElementException();
+            }
+            author.setId(id);
         }
         return author;
     }

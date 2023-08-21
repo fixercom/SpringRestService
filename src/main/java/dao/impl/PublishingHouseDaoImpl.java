@@ -73,6 +73,7 @@ public class PublishingHouseDaoImpl implements PublishingHouseDao {
             preparedStatement.setString(1, publishingHouse.getName());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
+            publishingHouse.setId(id);
         }
         return publishingHouse;
     }

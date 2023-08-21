@@ -3,13 +3,13 @@ package servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import config.JacksonObjectMapper;
 import entity.ApiError;
-import entity.Author;
+import entity.Book;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import service.AuthorService;
-import service.impl.AuthorServiceImpl;
+import service.BookService;
+import service.impl.BookServiceImpl;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 import static constants.Constant.CONTENT_TYPE_JSON;
 import static constants.Constant.NOT_VALID_REQUEST_URI;
 
-@WebServlet(value = "/authors/*")
-public class AuthorServlet extends HttpServlet {
+@WebServlet(value = "/books/*")
+public class BookServlet extends HttpServlet {
 
-    private final AuthorService authorService = AuthorServiceImpl.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
-    private static final String USER_NOT_FOUND_MESSAGE = "User with id=%d does not exist";
+    private static final String BOOK_NOT_FOUND_MESSAGE = "Book with id=%d does not exist";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -33,10 +33,10 @@ public class AuthorServlet extends HttpServlet {
         ApiError error;
         if (pathInfo == null) {
             String body = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            Author author = objectMapper.readValue(body, Author.class);
-            author = authorService.addAuthor(author);
+            Book book = objectMapper.readValue(body, Book.class);
+            book = bookService.addBook(book);
             resp.setStatus(201);
-            responseJson = objectMapper.writeValueAsString(author);
+            responseJson = objectMapper.writeValueAsString(book);
         } else {
             error = new ApiError(400, NOT_VALID_REQUEST_URI);
             responseJson = objectMapper.writeValueAsString(error);
@@ -55,11 +55,11 @@ public class AuthorServlet extends HttpServlet {
             try {
                 Long id = Long.parseLong(pathInfo.split("/")[1]);
                 try {
-                    Author author = authorService.getAuthorById(id);
-                    responseJson = objectMapper.writeValueAsString(author);
+                    Book book = bookService.getBookById(id);
+                    responseJson = objectMapper.writeValueAsString(book);
                     resp.setStatus(200);
                 } catch (NoSuchElementException e) {
-                    error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                    error = new ApiError(409, String.format(BOOK_NOT_FOUND_MESSAGE, id));
                     responseJson = objectMapper.writeValueAsString(error);
                     resp.setStatus(409);
                 }
@@ -69,8 +69,8 @@ public class AuthorServlet extends HttpServlet {
                 resp.setStatus(400);
             }
         } else {
-            List<Author> authors = authorService.getAllAuthors();
-            responseJson = objectMapper.writeValueAsString(authors);
+            List<Book> books = bookService.getAllBooks();
+            responseJson = objectMapper.writeValueAsString(books);
             resp.setStatus(200);
         }
         resp.setContentType(CONTENT_TYPE_JSON);
@@ -84,7 +84,7 @@ public class AuthorServlet extends HttpServlet {
         ApiError error;
         try {
             Long id = Long.parseLong(pathInfo.split("/")[1]);
-            authorService.deleteAuthor(id);
+            bookService.deleteBook(id);
             resp.setStatus(200);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
             error = new ApiError(400, NOT_VALID_REQUEST_URI);
@@ -104,12 +104,12 @@ public class AuthorServlet extends HttpServlet {
             Long id = Long.parseLong(pathInfo.split("/")[1]);
             try {
                 String body = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                Author author = objectMapper.readValue(body, Author.class);
-                author = authorService.updateAuthor(id, author);
-                responseJson = objectMapper.writeValueAsString(author);
+                Book book = objectMapper.readValue(body, Book.class);
+                book = bookService.updateBook(id, book);
+                responseJson = objectMapper.writeValueAsString(book);
                 resp.setStatus(200);
             } catch (NoSuchElementException e) {
-                error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                error = new ApiError(409, String.format(BOOK_NOT_FOUND_MESSAGE, id));
                 responseJson = objectMapper.writeValueAsString(error);
                 resp.setStatus(409);
             }
@@ -121,5 +121,4 @@ public class AuthorServlet extends HttpServlet {
         resp.setContentType(CONTENT_TYPE_JSON);
         resp.getWriter().append(responseJson);
     }
-
 }
