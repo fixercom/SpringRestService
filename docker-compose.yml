@@ -1,7 +1,8 @@
 services:
 
   db:
-    image: postgres:14-alpine
+    build:
+      dockerfile: Dockerfile
     container_name: servlets-rs-postgres-container
     ports:
       - "6001:5432"
