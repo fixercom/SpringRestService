@@ -1,7 +1,9 @@
 package dao.impl;
 
+import config.DataSource;
 import dao.PublishingHouseDao;
 import entity.PublishingHouse;
+import exception.DaoException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,22 +27,26 @@ public class PublishingHouseDaoImpl implements PublishingHouseDao {
     }
 
     @Override
-    public PublishingHouse save(PublishingHouse publishingHouse, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
-                Statement.RETURN_GENERATED_KEYS)) {
+    public PublishingHouse save(PublishingHouse publishingHouse) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
+                     Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, publishingHouse.getName());
             preparedStatement.executeUpdate();
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 publishingHouse.setId(generatedKeys.getLong("id"));
             }
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
         return publishingHouse;
     }
 
     @Override
-    public Optional<PublishingHouse> findById(Long id, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+    public Optional<PublishingHouse> findById(Long id) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             PublishingHouse publishingHouse = null;
@@ -50,12 +56,15 @@ public class PublishingHouseDaoImpl implements PublishingHouseDao {
                 publishingHouse.setName(resultSet.getString("name"));
             }
             return Optional.ofNullable(publishingHouse);
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public List<PublishingHouse> findAll(Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+    public List<PublishingHouse> findAll() {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             List<PublishingHouse> publishingHouses = new ArrayList<>();
             while (resultSet.next()) {
@@ -64,25 +73,33 @@ public class PublishingHouseDaoImpl implements PublishingHouseDao {
                 publishingHouses.add(new PublishingHouse(id, name));
             }
             return publishingHouses;
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public PublishingHouse update(Long id, PublishingHouse publishingHouse, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+    public PublishingHouse update(Long id, PublishingHouse publishingHouse) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, publishingHouse.getName());
             preparedStatement.setLong(2, id);
             preparedStatement.executeUpdate();
             publishingHouse.setId(id);
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
         return publishingHouse;
     }
 
     @Override
-    public void delete(Long id, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
+    public void delete(Long id) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 }

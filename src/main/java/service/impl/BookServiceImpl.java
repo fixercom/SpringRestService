@@ -1,15 +1,11 @@
 package service.impl;
 
-import config.DataSource;
 import dao.BookDao;
 import dao.impl.BookDaoImpl;
 import entity.Author;
 import entity.Book;
-import exception.DaoException;
 import service.BookService;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -26,54 +22,32 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book addBook(Book book) {
-        try (Connection connection = DataSource.getConnection()) {
-            connection.setAutoCommit(false);
-            book = bookDao.save(book, connection);
-            List<Author> authors = bookDao.findAllAuthorsByBookId(book.getId(), connection);
-            book.setAuthors(authors);
-            connection.commit();
-            return book;
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
+        book = bookDao.save(book);
+        List<Author> authors = bookDao.findAllAuthorsByBookId(book.getId());
+        book.setAuthors(authors);
+        return book;
     }
 
     @Override
     public Book getBookById(Long id) {
-        try (Connection connection = DataSource.getConnection()) {
-            Book book = bookDao.findById(id, connection).orElseThrow();
-            List<Author> authors = bookDao.findAllAuthorsByBookId(book.getId(), connection);
-            book.setAuthors(authors);
-            return book;
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
+        Book book = bookDao.findById(id).orElseThrow();
+        List<Author> authors = bookDao.findAllAuthorsByBookId(book.getId());
+        book.setAuthors(authors);
+        return book;
     }
 
     @Override
     public List<Book> getAllBooks() {
-        try (Connection connection = DataSource.getConnection()) {
-            return bookDao.findAll(connection);
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
+        return bookDao.findAll();
     }
 
     @Override
     public Book updateBook(Long id, Book book) {
-        try (Connection connection = DataSource.getConnection()) {
-            return bookDao.update(id, book, connection);
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
+        return bookDao.update(id, book);
     }
 
     @Override
     public void deleteBook(Long id) {
-        try (Connection connection = DataSource.getConnection()) {
-            bookDao.delete(id, connection);
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
+        bookDao.delete(id);
     }
 }

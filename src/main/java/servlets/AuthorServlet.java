@@ -16,15 +16,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import static constants.Constant.CONTENT_TYPE_JSON;
-import static constants.Constant.NOT_VALID_REQUEST_URI;
-
 @WebServlet(value = "/authors/*")
 public class AuthorServlet extends HttpServlet {
 
-    private final AuthorService authorService = AuthorServiceImpl.getInstance();
+    private AuthorService authorService = AuthorServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
     private static final String USER_NOT_FOUND_MESSAGE = "User with id=%d does not exist";
+    private static final String CONTENT_TYPE = "application/json";
+    private static final String NOT_VALID_REQUEST_URI_MESSAGE = "Not valid request uri";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -38,11 +37,11 @@ public class AuthorServlet extends HttpServlet {
             resp.setStatus(201);
             responseJson = objectMapper.writeValueAsString(author);
         } else {
-            error = new ApiError(400, NOT_VALID_REQUEST_URI);
+            error = new ApiError(400, NOT_VALID_REQUEST_URI_MESSAGE);
             responseJson = objectMapper.writeValueAsString(error);
             resp.setStatus(400);
         }
-        resp.setContentType(CONTENT_TYPE_JSON);
+        resp.setContentType(CONTENT_TYPE);
         resp.getWriter().append(responseJson);
     }
 
@@ -64,7 +63,7 @@ public class AuthorServlet extends HttpServlet {
                     resp.setStatus(409);
                 }
             } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
-                error = new ApiError(400, NOT_VALID_REQUEST_URI);
+                error = new ApiError(400, NOT_VALID_REQUEST_URI_MESSAGE);
                 responseJson = objectMapper.writeValueAsString(error);
                 resp.setStatus(400);
             }
@@ -73,7 +72,7 @@ public class AuthorServlet extends HttpServlet {
             responseJson = objectMapper.writeValueAsString(authors);
             resp.setStatus(200);
         }
-        resp.setContentType(CONTENT_TYPE_JSON);
+        resp.setContentType(CONTENT_TYPE);
         resp.getWriter().append(responseJson);
     }
 
@@ -87,10 +86,10 @@ public class AuthorServlet extends HttpServlet {
             authorService.deleteAuthor(id);
             resp.setStatus(200);
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
-            error = new ApiError(400, NOT_VALID_REQUEST_URI);
+            error = new ApiError(400, NOT_VALID_REQUEST_URI_MESSAGE);
             responseJson = objectMapper.writeValueAsString(error);
             resp.setStatus(400);
-            resp.setContentType(CONTENT_TYPE_JSON);
+            resp.setContentType(CONTENT_TYPE);
             resp.getWriter().append(responseJson);
         }
     }
@@ -114,11 +113,11 @@ public class AuthorServlet extends HttpServlet {
                 resp.setStatus(409);
             }
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException e) {
-            error = new ApiError(400, NOT_VALID_REQUEST_URI);
+            error = new ApiError(400, NOT_VALID_REQUEST_URI_MESSAGE);
             responseJson = objectMapper.writeValueAsString(error);
             resp.setStatus(400);
         }
-        resp.setContentType(CONTENT_TYPE_JSON);
+        resp.setContentType(CONTENT_TYPE);
         resp.getWriter().append(responseJson);
     }
 

@@ -7,6 +7,7 @@ public class Author {
 
     private Long id;
     private String name;
+    List<Book> books;
 
     public Author() {
     }
@@ -34,6 +35,14 @@ public class Author {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 
     @Override

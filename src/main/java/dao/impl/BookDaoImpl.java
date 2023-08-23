@@ -1,9 +1,11 @@
 package dao.impl;
 
+import config.DataSource;
 import dao.BookDao;
 import entity.Author;
 import entity.Book;
 import entity.PublishingHouse;
+import exception.DaoException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,7 +40,7 @@ public class BookDaoImpl implements BookDao {
             SET
                 name = ?,
                 publishing_house_id = ?
-            WHERE id = ?            
+            WHERE id = ?
             """;
     private static final String DELETE_SQL = "DELETE FROM books WHERE id = ?";
 
@@ -50,34 +52,40 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public Book save(Book book, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_SQL,
-                Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, book.getName());
-            preparedStatement.setLong(2, book.getPublishingHouse().getId());
-            preparedStatement.executeUpdate();
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+    public Book save(Book book) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement saveBookPrepareStatement = connection.prepareStatement(SAVE_SQL,
+                     Statement.RETURN_GENERATED_KEYS);
+             PreparedStatement saveAuthorsForBookPrepareStatement = connection.prepareStatement(SAVE_AUTHORS_SQL)) {
+            connection.setAutoCommit(false);
+            saveBookPrepareStatement.setString(1, book.getName());
+            saveBookPrepareStatement.setLong(2, book.getPublishingHouse().getId());
+            saveBookPrepareStatement.executeUpdate();
+            ResultSet generatedKeys = saveBookPrepareStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 book.setId(generatedKeys.getLong("id"));
             }
-        }
-        try (PreparedStatement preparedStatement = connection.prepareStatement(SAVE_AUTHORS_SQL)) {
+
             List<Long> authorIds = book.getAuthors().stream()
                     .map(Author::getId)
                     .toList();
             for (Long authorId : authorIds) {
-                preparedStatement.setLong(1, authorId);
-                preparedStatement.setLong(2, book.getId());
-                preparedStatement.addBatch();
+                saveAuthorsForBookPrepareStatement.setLong(1, authorId);
+                saveAuthorsForBookPrepareStatement.setLong(2, book.getId());
+                saveAuthorsForBookPrepareStatement.addBatch();
             }
-            preparedStatement.executeBatch();
+            saveAuthorsForBookPrepareStatement.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
         return book;
     }
 
     @Override
-    public Optional<Book> findById(Long id, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
+    public Optional<Book> findById(Long id) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_SQL)) {
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             Book book = null;
@@ -85,39 +93,50 @@ public class BookDaoImpl implements BookDao {
                 book = createBook(resultSet);
             }
             return Optional.ofNullable(book);
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public List<Book> findAll(Connection connection) throws SQLException {
+    public List<Book> findAll() {
         List<Book> books = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Book book = createBook(resultSet);
                 books.add(book);
             }
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
         return books;
     }
 
     @Override
-    public Book update(Long id, Book book, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
+    public Book update(Long id, Book book) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SQL)) {
             preparedStatement.setString(1, book.getName());
             preparedStatement.setLong(2, book.getPublishingHouse().getId());
             preparedStatement.setLong(3, id);
             preparedStatement.executeUpdate();
             book.setId(id);
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
         return book;
     }
 
     @Override
-    public void delete(Long id, Connection connection) throws SQLException {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
+    public void delete(Long id) {
+        try (Connection connection = DataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SQL)) {
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException(e);
         }
     }
 
@@ -137,6 +156,26 @@ public class BookDaoImpl implements BookDao {
         return authors;
     }
 
+    @Override
+    public List<Author> findAllAuthorsByBookId(Long bookId) {
+        List<Author> authors = new ArrayList<>();
+        try(Connection connection = DataSource.getConnection()){
+            try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_AUTHORS_BY_BOOK_ID_SQL)) {
+                preparedStatement.setLong(1, bookId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    Author author = new Author();
+                    author.setId(resultSet.getLong("authorId"));
+                    author.setName(resultSet.getString("authorName"));
+                    authors.add(author);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+        return authors;
+    }
+
     private static Book createBook(ResultSet resultSet) throws SQLException {
         PublishingHouse publishingHouse = new PublishingHouse();
         publishingHouse.setId(resultSet.getLong("publishingHouseId"));
@@ -147,4 +186,5 @@ public class BookDaoImpl implements BookDao {
         book.setPublishingHouse(publishingHouse);
         return book;
     }
+
 }
