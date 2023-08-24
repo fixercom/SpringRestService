@@ -1,6 +1,7 @@
 package servlets;
 
 import entity.Author;
+import entity.PublishingHouse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -10,25 +11,27 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import service.AuthorService;
+import service.PublishingHouseService;
 
 import java.io.*;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthorServletTest {
+class PublishingHouseServletTest {
 
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private AuthorService authorService;
+    private PublishingHouseService publishingHouseService;
     @InjectMocks
-    private AuthorServlet authorServlet;
+    private PublishingHouseServlet publishingHouseServlet;
 
     @Test
     void testDoPostWhenPathInfoIsNull() throws IOException {
@@ -36,15 +39,16 @@ class AuthorServletTest {
 
         when(request.getPathInfo()).thenReturn(null);
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.addAuthor(any(Author.class))).thenReturn(new Author(""));
+        when(publishingHouseService.addPublishingHouse(any(PublishingHouse.class)))
+                .thenReturn(new PublishingHouse(""));
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPost(request, response);
+        publishingHouseServlet.doPost(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
         inOrder.verify(request).getReader();
-        inOrder.verify(authorService).addAuthor(any(Author.class));
+        inOrder.verify(publishingHouseService).addPublishingHouse(any(PublishingHouse.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -55,7 +59,7 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPost(request, response);
+        publishingHouseServlet.doPost(request, response);
 
         InOrder inOrder = inOrder(request, response);
         inOrder.verify(request).getPathInfo();
@@ -67,14 +71,14 @@ class AuthorServletTest {
     @Test
     void testDoGetWhenPathInfoIsNull() throws IOException {
         when(request.getPathInfo()).thenReturn(null);
-        when(authorService.getAllAuthors()).thenReturn(Collections.emptyList());
+        when(publishingHouseService.getAllPublishingHouses()).thenReturn(Collections.emptyList());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        publishingHouseServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAllAuthors();
+        inOrder.verify(publishingHouseService).getAllPublishingHouses();
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -83,30 +87,30 @@ class AuthorServletTest {
     @Test
     void testDoGetWhenCorrectPathInfoWithPathVariable() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
-        when(authorService.getAuthorById(1L)).thenReturn(new Author());
+        when(publishingHouseService.getPublishingHouseById(1L)).thenReturn(new PublishingHouse());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        publishingHouseServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAuthorById(anyLong());
+        inOrder.verify(publishingHouseService).getPublishingHouseById(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoGetWhenAuthorNotExist() throws IOException {
+    void testDoGetWhenPublishingHouseNotExist() throws IOException {
         when(request.getPathInfo()).thenReturn("/9999");
-        when(authorService.getAuthorById(9999L)).thenThrow(NoSuchElementException.class);
+        when(publishingHouseService.getPublishingHouseById(9999L)).thenThrow(NoSuchElementException.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        publishingHouseServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAuthorById(anyLong());
+        inOrder.verify(publishingHouseService).getPublishingHouseById(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -117,7 +121,7 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/1f");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        publishingHouseServlet.doGet(request, response);
 
         InOrder inOrder = inOrder(request, response);
         inOrder.verify(request).getPathInfo();
@@ -130,11 +134,11 @@ class AuthorServletTest {
     void TestDoDeleteWhenSuccessful() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
 
-        authorServlet.doDelete(request, response);
+        publishingHouseServlet.doDelete(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).deleteAuthor(anyLong());
+        inOrder.verify(publishingHouseService).deletePublishingHouse(anyLong());
         inOrder.verify(response).setStatus(anyInt());
     }
 
@@ -143,47 +147,49 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/5r");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doDelete(request, response);
+        publishingHouseServlet.doDelete(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService, never()).deleteAuthor(anyLong());
+        inOrder.verify(publishingHouseService, never()).deletePublishingHouse(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoPutWhenAuthorForUpdateIsPresent() throws IOException {
+    void testDoPutWhenPublishingHouseForUpdateIsPresent() throws IOException {
         String json = "{\"name\":\"testName\"}";
         when(request.getPathInfo()).thenReturn("/1");
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.updateAuthor(anyLong(), any(Author.class))).thenReturn(new Author(""));
+        when(publishingHouseService.updatePublishingHouse(anyLong(), any(PublishingHouse.class)))
+                .thenReturn(new PublishingHouse(""));
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        publishingHouseServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(publishingHouseService).updatePublishingHouse(anyLong(), any(PublishingHouse.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoPutWhenAuthorForUpdateIsNotPresent() throws IOException {
+    void testDoPutWhenPublishingHouseForUpdateIsNotPresent() throws IOException {
         String json = "{\"name\":\"testName\"}";
         when(request.getPathInfo()).thenReturn("/9999");
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.updateAuthor(anyLong(), any(Author.class))).thenThrow(NoSuchElementException.class);
+        when(publishingHouseService.updatePublishingHouse(anyLong(), any(PublishingHouse.class)))
+                .thenThrow(NoSuchElementException.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        publishingHouseServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(publishingHouseService).updatePublishingHouse(anyLong(), any(PublishingHouse.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -194,11 +200,11 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/9r");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        publishingHouseServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, publishingHouseService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService, never()).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(publishingHouseService,never()).updatePublishingHouse(anyLong(), any(PublishingHouse.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();

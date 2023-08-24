@@ -21,7 +21,7 @@ public class AuthorServlet extends HttpServlet {
 
     private AuthorService authorService = AuthorServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
-    private static final String USER_NOT_FOUND_MESSAGE = "User with id=%d does not exist";
+    private static final String AUTHOR_NOT_FOUND_MESSAGE = "Author with id=%d does not exist";
     private static final String CONTENT_TYPE = "application/json";
     private static final String NOT_VALID_REQUEST_URI_MESSAGE = "Not valid request uri";
 
@@ -58,7 +58,7 @@ public class AuthorServlet extends HttpServlet {
                     responseJson = objectMapper.writeValueAsString(author);
                     resp.setStatus(200);
                 } catch (NoSuchElementException e) {
-                    error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                    error = new ApiError(409, String.format(AUTHOR_NOT_FOUND_MESSAGE, id));
                     responseJson = objectMapper.writeValueAsString(error);
                     resp.setStatus(409);
                 }
@@ -108,7 +108,7 @@ public class AuthorServlet extends HttpServlet {
                 responseJson = objectMapper.writeValueAsString(author);
                 resp.setStatus(200);
             } catch (NoSuchElementException e) {
-                error = new ApiError(409, String.format(USER_NOT_FOUND_MESSAGE, id));
+                error = new ApiError(409, String.format(AUTHOR_NOT_FOUND_MESSAGE, id));
                 responseJson = objectMapper.writeValueAsString(error);
                 resp.setStatus(409);
             }

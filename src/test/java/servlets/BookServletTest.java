@@ -1,6 +1,6 @@
 package servlets;
 
-import entity.Author;
+import entity.Book;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
@@ -9,7 +9,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import service.AuthorService;
+import service.BookService;
 
 import java.io.*;
 import java.util.Collections;
@@ -19,16 +19,16 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthorServletTest {
+class BookServletTest {
 
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private AuthorService authorService;
+    private BookService bookService;
     @InjectMocks
-    private AuthorServlet authorServlet;
+    private BookServlet bookServlet;
 
     @Test
     void testDoPostWhenPathInfoIsNull() throws IOException {
@@ -36,15 +36,15 @@ class AuthorServletTest {
 
         when(request.getPathInfo()).thenReturn(null);
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.addAuthor(any(Author.class))).thenReturn(new Author(""));
+        when(bookService.addBook(any(Book.class))).thenReturn(new Book());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPost(request, response);
+        bookServlet.doPost(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
         inOrder.verify(request).getReader();
-        inOrder.verify(authorService).addAuthor(any(Author.class));
+        inOrder.verify(bookService).addBook(any(Book.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -55,7 +55,7 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPost(request, response);
+        bookServlet.doPost(request, response);
 
         InOrder inOrder = inOrder(request, response);
         inOrder.verify(request).getPathInfo();
@@ -67,14 +67,14 @@ class AuthorServletTest {
     @Test
     void testDoGetWhenPathInfoIsNull() throws IOException {
         when(request.getPathInfo()).thenReturn(null);
-        when(authorService.getAllAuthors()).thenReturn(Collections.emptyList());
+        when(bookService.getAllBooks()).thenReturn(Collections.emptyList());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        bookServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAllAuthors();
+        inOrder.verify(bookService).getAllBooks();
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -83,30 +83,30 @@ class AuthorServletTest {
     @Test
     void testDoGetWhenCorrectPathInfoWithPathVariable() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
-        when(authorService.getAuthorById(1L)).thenReturn(new Author());
+        when(bookService.getBookById(1L)).thenReturn(new Book());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        bookServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAuthorById(anyLong());
+        inOrder.verify(bookService).getBookById(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoGetWhenAuthorNotExist() throws IOException {
+    void testDoGetWhenBookNotExist() throws IOException {
         when(request.getPathInfo()).thenReturn("/9999");
-        when(authorService.getAuthorById(9999L)).thenThrow(NoSuchElementException.class);
+        when(bookService.getBookById(9999L)).thenThrow(NoSuchElementException.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        bookServlet.doGet(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).getAuthorById(anyLong());
+        inOrder.verify(bookService).getBookById(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -117,7 +117,7 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/1f");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doGet(request, response);
+        bookServlet.doGet(request, response);
 
         InOrder inOrder = inOrder(request, response);
         inOrder.verify(request).getPathInfo();
@@ -130,11 +130,11 @@ class AuthorServletTest {
     void TestDoDeleteWhenSuccessful() throws IOException {
         when(request.getPathInfo()).thenReturn("/1");
 
-        authorServlet.doDelete(request, response);
+        bookServlet.doDelete(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).deleteAuthor(anyLong());
+        inOrder.verify(bookService).deleteBook(anyLong());
         inOrder.verify(response).setStatus(anyInt());
     }
 
@@ -143,47 +143,47 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/5r");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doDelete(request, response);
+        bookServlet.doDelete(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService, never()).deleteAuthor(anyLong());
+        inOrder.verify(bookService, never()).deleteBook(anyLong());
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoPutWhenAuthorForUpdateIsPresent() throws IOException {
+    void testDoPutWhenBookForUpdateIsPresent() throws IOException {
         String json = "{\"name\":\"testName\"}";
         when(request.getPathInfo()).thenReturn("/1");
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.updateAuthor(anyLong(), any(Author.class))).thenReturn(new Author(""));
+        when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(new Book());
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        bookServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(bookService).updateBook(anyLong(), any(Book.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
     }
 
     @Test
-    void testDoPutWhenAuthorForUpdateIsNotPresent() throws IOException {
+    void testDoPutWhenBookForUpdateIsNotPresent() throws IOException {
         String json = "{\"name\":\"testName\"}";
         when(request.getPathInfo()).thenReturn("/9999");
         when(request.getReader()).thenReturn(new BufferedReader(new StringReader(json)));
-        when(authorService.updateAuthor(anyLong(), any(Author.class))).thenThrow(NoSuchElementException.class);
+        when(bookService.updateBook(anyLong(), any(Book.class))).thenThrow(NoSuchElementException.class);
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        bookServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(bookService).updateBook(anyLong(), any(Book.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();
@@ -194,11 +194,11 @@ class AuthorServletTest {
         when(request.getPathInfo()).thenReturn("/9r");
         when(response.getWriter()).thenReturn(new PrintWriter(new StringWriter()));
 
-        authorServlet.doPut(request, response);
+        bookServlet.doPut(request, response);
 
-        InOrder inOrder = inOrder(request, response, authorService);
+        InOrder inOrder = inOrder(request, response, bookService);
         inOrder.verify(request).getPathInfo();
-        inOrder.verify(authorService, never()).updateAuthor(anyLong(), any(Author.class));
+        inOrder.verify(bookService, never()).updateBook(anyLong(), any(Book.class));
         inOrder.verify(response).setStatus(anyInt());
         inOrder.verify(response).setContentType(anyString());
         inOrder.verify(response).getWriter();

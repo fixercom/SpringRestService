@@ -3,6 +3,7 @@ package service.impl;
 import dao.AuthorDao;
 import dao.impl.AuthorDaoImpl;
 import entity.Author;
+import entity.Book;
 import service.AuthorService;
 
 import java.util.List;
@@ -25,7 +26,10 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Author getAuthorById(Long id) {
-        return authorDao.findById(id).orElseThrow();
+        Author author = authorDao.findById(id).orElseThrow();
+        List<Book> authorBooks = authorDao.findAllBooksByAuthorId(id);
+        author.setBooks(authorBooks);
+        return author;
     }
 
     @Override

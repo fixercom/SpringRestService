@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @WebServlet(value = "/publishing_houses/*")
 public class PublishingHouseServlet extends HttpServlet {
 
-    private final PublishingHouseService publishingHouseService = PublishingHouseServiceImpl.getInstance();
+    private PublishingHouseService publishingHouseService = PublishingHouseServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
     private static final String PUBLISHING_HOUSE_NOT_FOUND_MESSAGE = "Publishing house with id=%d does not exist";
     private static final String CONTENT_TYPE = "application/json";

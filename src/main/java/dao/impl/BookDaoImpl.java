@@ -141,22 +141,6 @@ public class BookDaoImpl implements BookDao {
     }
 
     @Override
-    public List<Author> findAllAuthorsByBookId(Long bookId, Connection connection) throws SQLException {
-        List<Author> authors = new ArrayList<>();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_AUTHORS_BY_BOOK_ID_SQL)) {
-            preparedStatement.setLong(1, bookId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Author author = new Author();
-                author.setId(resultSet.getLong("authorId"));
-                author.setName(resultSet.getString("authorName"));
-                authors.add(author);
-            }
-        }
-        return authors;
-    }
-
-    @Override
     public List<Author> findAllAuthorsByBookId(Long bookId) {
         List<Author> authors = new ArrayList<>();
         try(Connection connection = DataSource.getConnection()){

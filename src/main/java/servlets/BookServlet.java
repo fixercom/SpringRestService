@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @WebServlet(value = "/books/*")
 public class BookServlet extends HttpServlet {
 
-    private final BookService bookService = BookServiceImpl.getInstance();
+    private BookService bookService = BookServiceImpl.getInstance();
     private final ObjectMapper objectMapper = JacksonObjectMapper.getInstance();
     private static final String BOOK_NOT_FOUND_MESSAGE = "Book with id=%d does not exist";
     private static final String CONTENT_TYPE = "application/json";
