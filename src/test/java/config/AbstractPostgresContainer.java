@@ -10,6 +10,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+/***
+ * The singleton container is started only once when the base class is loaded.
+ * The container can then be used by all inheriting test classes. At the end of
+ * the test suite the Ryuk container that is started by Testcontainers core will
+ * take care of stopping the singleton container.
+ * **/
 public abstract class AbstractPostgresContainer {
     private static final Properties properties = new Properties();
 
