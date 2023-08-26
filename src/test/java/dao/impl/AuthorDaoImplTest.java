@@ -1,6 +1,6 @@
 package dao.impl;
 
-import config.TestPostgresContainer;
+import config.AbstractPostgresContainer;
 import dao.AuthorDao;
 import dao.BookDao;
 import dao.PublishingHouseDao;
@@ -8,27 +8,21 @@ import entity.Author;
 import entity.Book;
 import entity.PublishingHouse;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
-class AuthorDaoImplTest {
-    @Container
-    private static final PostgreSQLContainer<?> postgreSQLContainer = TestPostgresContainer.getInstance();
+
+class AuthorDaoImplTest extends AbstractPostgresContainer {
     private static final AuthorDao authorDao = AuthorDaoImpl.getInstance();
     private static final PublishingHouseDao publishingHouseDao = PublishingHouseDaoImpl.getInstance();
     public static final BookDao bookDao = BookDaoImpl.getInstance();
 
 
     @Test
-    void testSave() throws SQLException {
+    void testSave() {
         String authorName = "Ivan";
         Author author = new Author(authorName);
         Author savedAuthor = authorDao.save(author);
@@ -43,7 +37,7 @@ class AuthorDaoImplTest {
     }
 
     @Test
-    void testFindById() throws SQLException {
+    void testFindById() {
         String authorName = "Andrey";
         Author author = new Author(authorName);
         Author savedAuthor = authorDao.save(author);
@@ -61,7 +55,7 @@ class AuthorDaoImplTest {
     }
 
     @Test
-    void testFindAll() throws SQLException {
+    void testFindAll() {
         Author author = new Author("author1");
         Author savedAuthor = authorDao.save(author);
 
@@ -74,7 +68,7 @@ class AuthorDaoImplTest {
     }
 
     @Test
-    void testUpdate() throws SQLException {
+    void testUpdate() {
         Author author = new Author("Alexey");
         Author authorForUpdate = new Author("Ivan");
 
@@ -93,7 +87,7 @@ class AuthorDaoImplTest {
     }
 
     @Test
-    void testDelete() throws SQLException {
+    void testDelete() {
         Author savedAuthor = authorDao.save(new Author("Robert"));
 
         assertEquals(1, authorDao.findAll().size(),
@@ -106,7 +100,7 @@ class AuthorDaoImplTest {
     }
 
     @Test
-    void testFindAllBooksByAuthorId() throws SQLException {
+    void testFindAllBooksByAuthorId() {
         Author savedAuthor = authorDao.save(new Author("Robert"));
         PublishingHouse savedPublishingHouse = publishingHouseDao
                 .save(new PublishingHouse("Crown"));

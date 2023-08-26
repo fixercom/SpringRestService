@@ -1,27 +1,20 @@
 package dao.impl;
 
-import config.TestPostgresContainer;
+import config.AbstractPostgresContainer;
 import dao.PublishingHouseDao;
 import entity.PublishingHouse;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
-class PublishingHouseDaoImplTest {
-    @Container
-    private static final PostgreSQLContainer<?> postgreSQLContainer = TestPostgresContainer.getInstance();
+class PublishingHouseDaoImplTest extends AbstractPostgresContainer {
 
     private static final PublishingHouseDao publishingHouseDao = PublishingHouseDaoImpl.getInstance();
 
     @Test
-    void testSave() throws SQLException {
+    void testSave() {
         PublishingHouse publishingHouse = new PublishingHouse("name");
         PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse);
 
@@ -36,7 +29,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testFindById() throws SQLException {
+    void testFindById() {
         PublishingHouse publishingHouse = new PublishingHouse("name");
         PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse);
 
@@ -53,7 +46,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testFindAll() throws SQLException {
+    void testFindAll() {
         PublishingHouse publishingHouse = new PublishingHouse("name");
         PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse);
 
@@ -66,7 +59,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testUpdate() throws SQLException {
+    void testUpdate() {
         PublishingHouse publishingHouse = new PublishingHouse("name");
         PublishingHouse publishingHouseForUpdate = new PublishingHouse("new");
         PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse);
@@ -84,7 +77,7 @@ class PublishingHouseDaoImplTest {
     }
 
     @Test
-    void testDelete() throws SQLException {
+    void testDelete() {
         PublishingHouse publishingHouse = new PublishingHouse("name");
         PublishingHouse savedPublishingHouse = publishingHouseDao.save(publishingHouse);
 
@@ -96,4 +89,5 @@ class PublishingHouseDaoImplTest {
         assertEquals(0, publishingHouseDao.findAll().size(),
                 "The findAll method must return a list with size = 0");
     }
+
 }

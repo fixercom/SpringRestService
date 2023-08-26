@@ -1,6 +1,6 @@
 package dao.impl;
 
-import config.TestPostgresContainer;
+import config.AbstractPostgresContainer;
 import dao.AuthorDao;
 import dao.BookDao;
 import dao.PublishingHouseDao;
@@ -8,21 +8,14 @@ import entity.Author;
 import entity.Book;
 import entity.PublishingHouse;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Testcontainers
-class BookDaoImplTest {
+class BookDaoImplTest extends AbstractPostgresContainer {
 
-    @Container
-    private static final PostgreSQLContainer<?> postgreSQLContainer = TestPostgresContainer.getInstance();
     private static final BookDao bookDao = BookDaoImpl.getInstance();
     private static final AuthorDao authorDao = AuthorDaoImpl.getInstance();
     private static final PublishingHouseDao publishingHouseDao = PublishingHouseDaoImpl.getInstance();
@@ -47,21 +40,21 @@ class BookDaoImplTest {
     }
 
     @Test
-    void testFindAllAuthorsByBookId() throws SQLException {
-            PublishingHouse publishingHouse = publishingHouseDao.save(new PublishingHouse("West"));
-            Author author1 = authorDao.save(new Author("John"));
-            Author author2 = authorDao.save(new Author("Jack"));
-            List<Author> authors = List.of(author1, author2);
-            Book bookForSave = new Book("Clean code", publishingHouse, authors);
-            Book savedBook = bookDao.save(bookForSave);
-            List<Author> savedAuthors = bookDao.findAllAuthorsByBookId(savedBook.getId());
+    void testFindAllAuthorsByBookId() {
+        PublishingHouse publishingHouse = publishingHouseDao.save(new PublishingHouse("West"));
+        Author author1 = authorDao.save(new Author("John"));
+        Author author2 = authorDao.save(new Author("Jack"));
+        List<Author> authors = List.of(author1, author2);
+        Book bookForSave = new Book("Clean code", publishingHouse, authors);
+        Book savedBook = bookDao.save(bookForSave);
+        List<Author> savedAuthors = bookDao.findAllAuthorsByBookId(savedBook.getId());
 
-            assertEquals(savedAuthors, savedBook.getAuthors());
+        assertEquals(savedAuthors, savedBook.getAuthors());
 
-            bookDao.delete(savedBook.getId());
-            authorDao.delete(author1.getId());
-            authorDao.delete(author2.getId());
-            publishingHouseDao.delete(publishingHouse.getId());
+        bookDao.delete(savedBook.getId());
+        authorDao.delete(author1.getId());
+        authorDao.delete(author2.getId());
+        publishingHouseDao.delete(publishingHouse.getId());
     }
 
     @Test
