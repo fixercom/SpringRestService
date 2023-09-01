@@ -21,7 +21,7 @@ public abstract class AbstractPostgresContainer {
 
     static {
         try {
-            properties.load(new FileReader("src/test/resources/datasource.properties"));
+            properties.load(AbstractPostgresContainer.class.getResourceAsStream("/datasource.properties"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
