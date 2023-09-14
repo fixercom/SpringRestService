@@ -14,6 +14,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <revision>1.0-SNAPSHOT</revision>
+        <tomcat-embed-core.version>10.1.13</tomcat-embed-core.version>
+        <spring-webmvc.version>6.0.11</spring-webmvc.version>
         <HikariCP.version>5.0.1</HikariCP.version>
         <log4j-slf4j18-impl.version>2.18.0</log4j-slf4j18-impl.version>
         <postgresql.version>42.6.0</postgresql.version>
@@ -27,6 +29,19 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>${tomcat-embed-core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-webmvc.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
