@@ -1,50 +1,52 @@
 package com.example.service.impl;
 
-import com.example.dao.AuthorDao;
-import com.example.dao.impl.AuthorDaoImpl;
 import com.example.entity.Author;
-import com.example.entity.Book;
+import com.example.repository.AuthorRepository;
 import com.example.service.AuthorService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
+@Service
+@Transactional(readOnly = true)
 public class AuthorServiceImpl implements AuthorService {
-    private static final AuthorServiceImpl INSTANCE = new AuthorServiceImpl();
-    private AuthorDao authorDao = AuthorDaoImpl.getInstance();
 
-    private AuthorServiceImpl() {
-    }
+    private final AuthorRepository authorRepository;
 
-    public static AuthorServiceImpl getInstance() {
-        return INSTANCE;
+    @Autowired
+    public AuthorServiceImpl(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
     @Override
+    @Transactional
     public Author addAuthor(Author author) {
-        return authorDao.save(author);
+        return authorRepository.save(author);
     }
 
     @Override
     public Author getAuthorById(Long id) {
-        Author author = authorDao.findById(id).orElseThrow();
-        List<Book> authorBooks = authorDao.findAllBooksByAuthorId(id);
-        author.setBooks(authorBooks);
-        return author;
+        return authorRepository.findByIdWithBooks(id).orElseThrow();
     }
 
     @Override
-    public List<Author> getAllAuthors() {
-        return authorDao.findAll();
+    public Set<Author> getAllAuthors() {
+        return authorRepository.findAllWithBooks();
     }
 
     @Override
+    @Transactional
     public Author updateAuthor(Long id, Author author) {
-        return authorDao.update(id, author);
+        author.setId(id);
+        return authorRepository.save(author);
     }
 
     @Override
+    @Transactional
     public void deleteAuthor(Long id) {
-        authorDao.delete(id);
+        authorRepository.deleteById(id);
     }
 
 }

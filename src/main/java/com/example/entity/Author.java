@@ -1,24 +1,28 @@
 package com.example.entity;
 
-import java.util.List;
-import java.util.Objects;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "authors")
 public class Author {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column
     private String name;
-    List<Book> books;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();
 
-    public Author() {
+    public Long getId() {
+        return id;
     }
 
-    public Author(String name) {
-        this.name = name;
-    }
-
-    public Author(Long id, String name) {
+    public void setId(Long id) {
         this.id = id;
-        this.name = name;
     }
 
     public String getName() {
@@ -29,40 +33,13 @@ public class Author {
         this.name = name;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Book> getBooks() {
+    public Set<Book> getBooks() {
         return books;
     }
 
-    public void setBooks(List<Book> books) {
+    public void setBooks(Set<Book> books) {
         this.books = books;
     }
 
-    @Override
-    public String toString() {
-        return "Author{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return Objects.equals(id, author.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
+

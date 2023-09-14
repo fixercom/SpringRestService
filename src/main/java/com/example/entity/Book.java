@@ -1,74 +1,28 @@
 package com.example.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "books")
 public class Book {
 
-    Long id;
-    String name;
-    PublishingHouse publishingHouse;
-    List<Author> authors = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column
+    private String name;
+    @OneToOne
+    private PublishingHouse publishingHouse;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "author_books",
+            joinColumns = @JoinColumn(name = "author_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id"))
+    Set<Author> authors = new HashSet<>();
 
-    public Book() {
-    }
-
-    public Book(String name, PublishingHouse publishingHouse) {
-        this.name = name;
-        this.publishingHouse = publishingHouse;
-    }
-
-    public Book(String name, PublishingHouse publishingHouse, List<Author> authors) {
-        this.name = name;
-        this.publishingHouse = publishingHouse;
-        this.authors = authors;
-    }
-
-    public Book(Long id, String name, PublishingHouse publishingHouse) {
-        this.id = id;
-        this.name = name;
-        this.publishingHouse = publishingHouse;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
-
-    public PublishingHouse getPublishingHouse() {
-        return publishingHouse;
-    }
-
-    public void setPublishingHouse(PublishingHouse publishingHouse) {
-        this.publishingHouse = publishingHouse;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", publishingHouse=" + publishingHouse +
-                ", authors=" + authors +
-                '}';
-    }
 }
+

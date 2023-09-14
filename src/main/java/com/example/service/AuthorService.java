@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.entity.Author;
 
-import java.util.List;
+import java.util.Set;
 
 public interface AuthorService {
 
@@ -10,7 +10,7 @@ public interface AuthorService {
 
     Author getAuthorById(Long id);
 
-    List<Author> getAllAuthors();
+    Set<Author> getAllAuthors();
 
     Author updateAuthor(Long id, Author author);
 

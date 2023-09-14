@@ -1,23 +1,16 @@
 package com.example.entity;
 
-import java.util.Objects;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "publishing_houses")
 public class PublishingHouse {
 
-    Long id;
-    String name;
-
-    public PublishingHouse() {
-    }
-
-    public PublishingHouse(String name) {
-        this.name = name;
-    }
-
-    public PublishingHouse(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column
+    private String name;
 
     public Long getId() {
         return id;
@@ -35,24 +28,4 @@ public class PublishingHouse {
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PublishingHouse that = (PublishingHouse) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "PublishingHouse{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

@@ -1,47 +1,52 @@
 package com.example.service.impl;
 
-import com.example.dao.PublishingHouseDao;
-import com.example.dao.impl.PublishingHouseDaoImpl;
 import com.example.entity.PublishingHouse;
+import com.example.repository.PublishingHouseRepository;
 import com.example.service.PublishingHouseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Service
+@Transactional(readOnly = true)
 public class PublishingHouseServiceImpl implements PublishingHouseService {
 
-    private static final PublishingHouseServiceImpl INSTANCE = new PublishingHouseServiceImpl();
-    private PublishingHouseDao publishingHouseDao = PublishingHouseDaoImpl.getInstance();
+    private final PublishingHouseRepository publishingHouseRepository;
 
-    private PublishingHouseServiceImpl() {
-    }
-
-    public static PublishingHouseServiceImpl getInstance() {
-        return INSTANCE;
+    @Autowired
+    public PublishingHouseServiceImpl(PublishingHouseRepository publishingHouseRepository) {
+        this.publishingHouseRepository = publishingHouseRepository;
     }
 
     @Override
+    @Transactional
     public PublishingHouse addPublishingHouse(PublishingHouse publishingHouse) {
-        return publishingHouseDao.save(publishingHouse);
+        return publishingHouseRepository.save(publishingHouse);
     }
 
     @Override
     public PublishingHouse getPublishingHouseById(Long id) {
-        return publishingHouseDao.findById(id).orElseThrow();
+        return publishingHouseRepository.findById(id).orElseThrow();
     }
 
     @Override
     public List<PublishingHouse> getAllPublishingHouses() {
-        return publishingHouseDao.findAll();
+        return publishingHouseRepository.findAll();
     }
 
     @Override
+    @Transactional
     public PublishingHouse updatePublishingHouse(Long id, PublishingHouse publishingHouse) {
-        return publishingHouseDao.update(id, publishingHouse);
+        publishingHouse.setId(id);
+        return publishingHouseRepository.save(publishingHouse);
     }
 
     @Override
+    @Transactional
     public void deletePublishingHouse(Long id) {
-        publishingHouseDao.delete(id);
+        publishingHouseRepository.deleteById(id);
     }
 
 }
