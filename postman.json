@@ -335,13 +335,41 @@
 			"name": "Book",
 			"item": [
 				{
-					"name": "Add book",
+					"name": "Add book with id = 1",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"Book name\",\n    \"publishingHouse\": {\"id\":1},\n    \"authors\":[{\"id\":1},{\"id\":2}]\n}",
+							"raw": "{\n    \"name\":\"First book\",\n    \"publishingHouse\":1,\n    \"authors\":[1,2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add book with id = 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Second Book\",\n    \"publishingHouse\":2,\n    \"authors\":[2]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -396,6 +424,34 @@
 							"port": "8080",
 							"path": [
 								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book with id = 1",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Updated name\",\n    \"publishingHouse\":2,\n    \"authors\":[2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/books/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"books",
+								"1"
 							]
 						}
 					},
