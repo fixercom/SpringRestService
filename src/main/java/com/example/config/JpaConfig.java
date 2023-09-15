@@ -13,7 +13,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories("com.example.repository")
@@ -26,18 +27,23 @@ public class JpaConfig {
     }
 
     @Bean
+    Map<String, Object> hibernateProperties() {
+        Map<String, Object> propertyMap = new HashMap<>();
+        propertyMap.put("hibernate.format_sql", true);
+        return propertyMap;
+    }
+
+    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setShowSql(true);
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.format_sql", "true");
 
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(vendorAdapter);
         factory.setPackagesToScan("com.example");
         factory.setDataSource(dataSource());
-        factory.setJpaProperties(properties);
+        factory.setJpaPropertyMap(hibernateProperties());
         return factory;
     }
 
