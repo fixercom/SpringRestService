@@ -41,11 +41,19 @@ POST /books - добавление книги
 ```json
 {
   "name": "Romeo and Juliet",
-  "publishingHouse": {"id": 1},
-  "authors":[{"id": 1},{"id": 2}]
+  "publishingHouse": 1,
+  "authors":[1,2]
 }
 ```
 GET /books - получение книг  
 GET /books/{id} - получение книги по ее id  
-PUT /books/{id} - изменение книги  
+PUT /books/{id} - изменение книги
+>*Request body example:*
+```json
+{
+  "name": "Updated book name",
+  "publishingHouse": 7,
+  "authors":[4]
+}
+```
 DELETE /books/{id} - удаление книги
