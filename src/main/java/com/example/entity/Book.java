@@ -16,6 +16,7 @@ public class Book {
     @Column
     private String name;
     @OneToOne
+    @JoinColumn(name = "publishing_house_id")
     private PublishingHouse publishingHouse;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
