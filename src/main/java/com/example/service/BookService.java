@@ -2,7 +2,7 @@ package com.example.service;
 
 import com.example.entity.Book;
 
-import java.util.List;
+import java.util.Set;
 
 public interface BookService {
 
@@ -10,7 +10,7 @@ public interface BookService {
 
     Book getBookById(Long id);
 
-    List<Book> getAllBooks();
+    Set<Book> getAllBooks();
 
     Book updateBook(Long id, Book book);
 

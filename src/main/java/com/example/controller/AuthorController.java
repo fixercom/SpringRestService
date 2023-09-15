@@ -1,6 +1,9 @@
 package com.example.controller;
 
+import com.example.dto.AuthorDto;
+import com.example.dto.AuthorShort;
 import com.example.entity.Author;
+import com.example.mapper.AuthorMapper;
 import com.example.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,31 +16,35 @@ import java.util.Set;
 public class AuthorController {
 
     private final AuthorService authorService;
+    private final AuthorMapper authorMapper;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, AuthorMapper authorMapper) {
         this.authorService = authorService;
+        this.authorMapper = authorMapper;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Author addAuthor(@RequestBody Author author) {
-        return authorService.addAuthor(author);
+    public AuthorShort addAuthor(@RequestBody AuthorDto authorDto) {
+        Author author = authorMapper.toAuthor(authorDto);
+        return authorMapper.toAuthorShort(authorService.addAuthor(author));
     }
 
     @GetMapping("/{authorId}")
-    public Author getAuthorById(@PathVariable Long authorId) {
-        return authorService.getAuthorById(authorId);
+    public AuthorDto getAuthorById(@PathVariable Long authorId) {
+        return authorMapper.toAuthorDto(authorService.getAuthorById(authorId));
     }
 
     @GetMapping
-    public Set<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
+    public Set<AuthorShort> getAllAuthors() {
+        return authorMapper.toAuthorShortSet(authorService.getAllAuthors());
     }
 
     @PutMapping("/{authorId}")
-    public Author updateAuthor(@PathVariable Long authorId, @RequestBody Author author) {
-        return authorService.updateAuthor(authorId, author);
+    public AuthorShort updateAuthor(@PathVariable Long authorId, @RequestBody AuthorDto authorDto) {
+        Author author = authorMapper.toAuthor(authorDto);
+        return authorMapper.toAuthorShort(authorService.updateAuthor(authorId, author));
     }
 
     @DeleteMapping("/{authorId}")

@@ -14,7 +14,6 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("SELECT a FROM Author a LEFT JOIN FETCH a.books WHERE a.id = ?1")
     Optional<Author> findByIdWithBooks(Long id);
 
-    @Query("SELECT a FROM Author a LEFT JOIN FETCH a.books")
-    Set<Author> findAllWithBooks();
+    Set<Author> findByIdIn(Set<Long> authorIds);
 
 }

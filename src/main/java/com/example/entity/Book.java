@@ -1,9 +1,8 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -15,15 +14,46 @@ public class Book {
     private Long id;
     @Column
     private String name;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publishing_house_id")
     private PublishingHouse publishingHouse;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "author_books",
-            joinColumns = @JoinColumn(name = "author_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id"))
-    Set<Author> authors = new HashSet<>();
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    Set<Author> authors = new LinkedHashSet<>();
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public PublishingHouse getPublishingHouse() {
+        return publishingHouse;
+    }
+
+    public void setPublishingHouse(PublishingHouse publishingHouse) {
+        this.publishingHouse = publishingHouse;
+    }
+
+    public Set<Author> getAuthors() {
+        return authors;
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        this.authors = authors;
+    }
 }
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Service
@@ -33,7 +34,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public Set<Author> getAllAuthors() {
-        return authorRepository.findAllWithBooks();
+        return new LinkedHashSet<>(authorRepository.findAll());
     }
 
     @Override

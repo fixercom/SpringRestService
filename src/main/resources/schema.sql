@@ -33,6 +33,5 @@ CREATE TABLE IF NOT EXISTS author_books
     book_id   BIGINT NOT NULL,
 
     CONSTRAINT pk_author_books PRIMARY KEY (author_id, book_id),
-    constraint author_books_authors_id_fk foreign key (author_id) references authors (id) ON DELETE CASCADE,
     constraint author_books_books_id_fk foreign key (book_id) references books (id) ON DELETE CASCADE
 );

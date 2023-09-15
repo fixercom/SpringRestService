@@ -1,6 +1,8 @@
 package com.example.controller;
 
+import com.example.dto.PHouseDto;
 import com.example.entity.PublishingHouse;
+import com.example.mapper.PublishingHouseMapper;
 import com.example.service.PublishingHouseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,32 +15,38 @@ import java.util.List;
 public class PublishingHouseController {
 
     private final PublishingHouseService publishingHouseService;
+    private final PublishingHouseMapper publishingHouseMapper;
 
     @Autowired
-    public PublishingHouseController(PublishingHouseService publishingHouseService) {
+    public PublishingHouseController(PublishingHouseService publishingHouseService,
+                                     PublishingHouseMapper publishingHouseMapper) {
         this.publishingHouseService = publishingHouseService;
+        this.publishingHouseMapper = publishingHouseMapper;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PublishingHouse addPublishingHouse(@RequestBody PublishingHouse publishingHouse) {
-        return publishingHouseService.addPublishingHouse(publishingHouse);
+    public PHouseDto addPublishingHouse(@RequestBody PHouseDto pHouseDto) {
+        PublishingHouse publishingHouse = publishingHouseMapper.toPublishingHouse(pHouseDto);
+        return publishingHouseMapper.toPHouseDto(publishingHouseService.addPublishingHouse(publishingHouse));
     }
 
     @GetMapping("/{publishingHouseId}")
-    public PublishingHouse getPublishingHouseById(@PathVariable Long publishingHouseId) {
-        return publishingHouseService.getPublishingHouseById(publishingHouseId);
+    public PHouseDto getPublishingHouseById(@PathVariable Long publishingHouseId) {
+        return publishingHouseMapper.toPHouseDto(publishingHouseService.getPublishingHouseById(publishingHouseId));
     }
 
     @GetMapping
-    public List<PublishingHouse> getAllPublishingHouses() {
-        return publishingHouseService.getAllPublishingHouses();
+    public List<PHouseDto> getAllPublishingHouses() {
+        return publishingHouseMapper.toPHouseDtoList(publishingHouseService.getAllPublishingHouses());
     }
 
     @PutMapping("/{publishingHouseId}")
-    public PublishingHouse updatePublishingHouse(@PathVariable Long publishingHouseId,
-                                        @RequestBody PublishingHouse publishingHouse) {
-        return publishingHouseService.updatePublishingHouse(publishingHouseId, publishingHouse);
+    public PHouseDto updatePublishingHouse(@PathVariable Long publishingHouseId,
+                                                 @RequestBody PHouseDto pHouseDto) {
+        PublishingHouse publishingHouse = publishingHouseMapper.toPublishingHouse(pHouseDto);
+        return publishingHouseMapper.toPHouseDto(publishingHouseService
+                .updatePublishingHouse(publishingHouseId, publishingHouse));
     }
 
     @DeleteMapping("/{publishingHouseId}")
