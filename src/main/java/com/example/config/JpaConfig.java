@@ -3,8 +3,11 @@ package com.example.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -19,11 +22,23 @@ import java.util.Map;
 @Configuration
 @EnableJpaRepositories("com.example.repository")
 @EnableTransactionManagement
+@PropertySource(value = "classpath:datasource.properties")
 public class JpaConfig {
+
+    private final Environment environment;
+
+    @Autowired
+    public JpaConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     DataSource dataSource() {
-        return new HikariDataSource(new HikariConfig("/datasource.properties"));
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(environment.getRequiredProperty("hikari.jdbcUrl"));
+        hikariConfig.setUsername(environment.getRequiredProperty("hikari.user"));
+        hikariConfig.setPassword(environment.getRequiredProperty("hikari.password"));
+        return new HikariDataSource(hikariConfig);
     }
 
     @Bean
