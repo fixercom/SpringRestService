@@ -1,20 +1,24 @@
 services:
 
-#  srs-service:
-#    build:
-#      dockerfile: docker/server/Dockerfile
-#    image: servlets-rs-image
-#    container_name: servlets-rs-container
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      - db
-#    network_mode: host
+  srs-service:
+    build:
+      dockerfile: docker/server/Dockerfile
+    image: spring-rs-image
+    container_name: spring-rs-container
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    network_mode: host
+    environment:
+      - HIKARI_JDBCURL=jdbc:postgresql://localhost:6001/servlets_rs
+      - HIKARI_USER=user3827
+      - HIKARI_PASSWORD=_Fr5Yd5Yup
 
   db:
     build:
       dockerfile: docker/database/Dockerfile
-    container_name: servlets-rs-postgres-container
+    container_name: spring-rs-postgres-container
     ports:
       - "6001:5432"
     environment:

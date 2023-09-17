@@ -1,2 +1,3 @@
-FROM tomcat:latest
-COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+FROM amazoncorretto:17-alpine-jdk
+COPY target/*jar-with-dependencies.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
