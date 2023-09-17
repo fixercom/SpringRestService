@@ -33,7 +33,9 @@ class AuthorRepositoryTest {
     private final BookRepository bookRepository;
 
     @Autowired
-    public AuthorRepositoryTest(AuthorRepository authorRepository, PublishingHouseRepository publishingHouseRepository, BookRepository bookRepository) {
+    public AuthorRepositoryTest(AuthorRepository authorRepository,
+                                PublishingHouseRepository publishingHouseRepository,
+                                BookRepository bookRepository) {
         this.authorRepository = authorRepository;
         this.publishingHouseRepository = publishingHouseRepository;
         this.bookRepository = bookRepository;
@@ -64,7 +66,6 @@ class AuthorRepositoryTest {
         assertEquals(2, savedBook.getAuthors().size());
         assertTrue(authorNames.contains("Pushkin"));
         assertTrue(authorNames.contains("Dostoevsky"));
-
     }
 
 }
