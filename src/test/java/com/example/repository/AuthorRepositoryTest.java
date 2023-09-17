@@ -1,16 +1,13 @@
 package com.example.repository;
 
+import com.example.AbstractIntegrationTest;
 import com.example.config.JpaConfig;
 import com.example.entity.Author;
 import com.example.entity.Book;
 import com.example.entity.PublishingHouse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,12 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         AuthorRepository.class,
         PublishingHouseRepository.class,
         BookRepository.class})
-@TestPropertySource(locations = "classpath:test-datasource.properties")
-@Testcontainers
-class AuthorRepositoryTest {
+class AuthorRepositoryTest extends AbstractIntegrationTest {
 
-    @Container
-    private final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14-alpine");
     private final AuthorRepository authorRepository;
     private final PublishingHouseRepository publishingHouseRepository;
     private final BookRepository bookRepository;
@@ -43,29 +36,36 @@ class AuthorRepositoryTest {
 
     @Test
     void findByIdWithBooks() {
-        Author author1 = new Author();
-        author1.setName("Pushkin");
-        author1 = authorRepository.save(author1);
-        Author author2 = new Author();
-        author2.setName("Dostoevsky");
-        author2 = authorRepository.save(author2);
+        Author author = new Author();
+        author.setName("Pushkin");
+        author = authorRepository.save(author);
         PublishingHouse publishingHouse = new PublishingHouse();
         publishingHouse.setName("First house");
         publishingHouse = publishingHouseRepository.save(publishingHouse);
-        Book book = new Book();
-        book.setName("book");
-        book.setPublishingHouse(publishingHouse);
-        book.setAuthors(Set.of(author1, author2));
-        bookRepository.save(book);
+        Book book1 = new Book();
+        Book book2 = new Book();
+        book1.setName("book1");
+        book2.setName("book2");
+        book1.setPublishingHouse(publishingHouse);
+        book2.setPublishingHouse(publishingHouse);
+        book1.setAuthors(Set.of(author));
+        book2.setAuthors(Set.of(author));
+        book1 = bookRepository.save(book1);
+        book2 = bookRepository.save(book2);
 
-        Book savedBook = bookRepository.findByIdWithAuthors(1L).orElseThrow();
-        Set<String> authorNames = savedBook.getAuthors().stream()
-                .map(Author::getName)
+        Author savedAuthor = authorRepository.findByIdWithBooks(author.getId()).orElseThrow();
+
+        Set<String> bookNames = savedAuthor.getBooks().stream()
+                .map(Book::getName)
                 .collect(Collectors.toSet());
+        assertEquals(2, savedAuthor.getBooks().size());
+        assertTrue(bookNames.contains("book1"));
+        assertTrue(bookNames.contains("book2"));
 
-        assertEquals(2, savedBook.getAuthors().size());
-        assertTrue(authorNames.contains("Pushkin"));
-        assertTrue(authorNames.contains("Dostoevsky"));
+        bookRepository.delete(book1);
+        bookRepository.delete(book2);
+        publishingHouseRepository.delete(publishingHouse);
+        authorRepository.delete(author);
     }
 
 }
